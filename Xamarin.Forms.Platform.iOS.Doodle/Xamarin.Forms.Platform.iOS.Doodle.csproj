@@ -91,6 +91,8 @@
     <Compile Include="Extensions\UIViewExtensions.cs" />
     <Compile Include="Renderers\ButtonRenderer.cs" />
     <Compile Include="Renderers\PageRenderer.cs" />
+    <Compile Include="DoodlePlatformRenderer.cs" />
+    <Compile Include="DoodlePlatform.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Xamarin.Forms\Xamarin.Forms.Core\Xamarin.Forms.Core.csproj">

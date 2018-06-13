@@ -16,7 +16,7 @@ namespace Xamarin.Forms
                 app.MainPage = page;
             }
 
-            var result = new Platform.iOS.Doodle.Platform();
+            var result = new Platform.iOS.Doodle.DoodlePlatform();
             result.SetPage(page);
             return result.ViewController;
         }
