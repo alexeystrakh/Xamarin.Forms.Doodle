@@ -1,0 +1,41 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xamarin.Forms.Platform.iOS.Doodle", "Xamarin.Forms.Platform.iOS.Doodle\Xamarin.Forms.Platform.iOS.Doodle.csproj", "{FD73D7C7-8FED-46E2-B679-E0AA71BDCB41}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Xamarin.Forms", "Xamarin.Forms", "{0198118E-BDCA-4578-9F31-1F87D2587582}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{7458F13F-B725-4469-A42D-2A33147A2943}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Xamarin.Flex", "Xamarin.Forms\Xamarin.Flex\Xamarin.Flex.shproj", "{A6703C7D-D362-452A-A7A5-73771194D38C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xamarin.Forms.Core", "Xamarin.Forms\Xamarin.Forms.Core\Xamarin.Forms.Core.csproj", "{D57C3194-6E37-4927-9DC0-37C88B341895}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xamarin.Forms.Platform", "Xamarin.Forms\Xamarin.Forms.Platform\Xamarin.Forms.Platform.csproj", "{6AAA0462-2909-41D6-88E9-3D4BFF643B56}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FD73D7C7-8FED-46E2-B679-E0AA71BDCB41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD73D7C7-8FED-46E2-B679-E0AA71BDCB41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD73D7C7-8FED-46E2-B679-E0AA71BDCB41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD73D7C7-8FED-46E2-B679-E0AA71BDCB41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D57C3194-6E37-4927-9DC0-37C88B341895}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D57C3194-6E37-4927-9DC0-37C88B341895}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D57C3194-6E37-4927-9DC0-37C88B341895}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D57C3194-6E37-4927-9DC0-37C88B341895}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AAA0462-2909-41D6-88E9-3D4BFF643B56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AAA0462-2909-41D6-88E9-3D4BFF643B56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AAA0462-2909-41D6-88E9-3D4BFF643B56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AAA0462-2909-41D6-88E9-3D4BFF643B56}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FD73D7C7-8FED-46E2-B679-E0AA71BDCB41} = {0198118E-BDCA-4578-9F31-1F87D2587582}
+		{A6703C7D-D362-452A-A7A5-73771194D38C} = {0198118E-BDCA-4578-9F31-1F87D2587582}
+		{D57C3194-6E37-4927-9DC0-37C88B341895} = {0198118E-BDCA-4578-9F31-1F87D2587582}
+		{6AAA0462-2909-41D6-88E9-3D4BFF643B56} = {0198118E-BDCA-4578-9F31-1F87D2587582}
+	EndGlobalSection
+EndGlobal
