@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              xmlns:local="clr-namespace:Xamarin.Forms.Doodle.DoodleApp" 
              x:Class="Xamarin.Forms.Doodle.DoodleApp.MainPage">
-    <Button Text="Welcome to Xamarin.Forms.Doodle!" 
+    <Button Text="Xamarin.Forms.Doodle!" 
             HorizontalOptions="Center" 
             VerticalOptions="Center" />
 </ContentPage>
