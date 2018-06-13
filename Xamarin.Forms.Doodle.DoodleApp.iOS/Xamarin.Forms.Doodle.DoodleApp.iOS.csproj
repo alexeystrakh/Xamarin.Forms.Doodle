@@ -156,6 +156,11 @@
       <Project>{E5779B6F-A9C3-46A9-94A3-9772ECCF4C13}</Project>
       <Name>Xamarin.Forms.Doodle.DoodleApp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Xamarin.Forms.Platform.iOS.Doodle\Xamarin.Forms.Platform.iOS.Doodle.csproj">
+      <Project>{FD73D7C7-8FED-46E2-B679-E0AA71BDCB41}</Project>
+      <Name>Xamarin.Forms.Platform.iOS.Doodle</Name>
+      <Aliases>doodle</Aliases>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
