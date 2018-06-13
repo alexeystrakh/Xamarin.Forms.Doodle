@@ -7,7 +7,7 @@ using SkiaSharp;
 using SkiaSharp.Views.iOS;
 using UIKit;
 
-namespace Xamarin.Forms.Platform.iOS.Skia.Renderers
+namespace Xamarin.Forms.Platform.iOS.Doodle.Renderers
 {
     public class ButtonRenderer : ViewRenderer<Button, SKCanvasView>
     {

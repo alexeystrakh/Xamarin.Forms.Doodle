@@ -4,9 +4,9 @@ using System.Globalization;
 using CoreSpotlight;
 using Foundation;
 using UIKit;
-using Xamarin.Forms.Platform.iOS.Skia;
+using Xamarin.Forms.Platform.iOS.Doodle;
 
-namespace Xamarin.Forms.Platform.iOS.Skia
+namespace Xamarin.Forms.Platform.iOS.Doodle
 {
     public class FormsApplicationDelegate : UIApplicationDelegate
     {

@@ -1,6 +1,6 @@
 #if __MOBILE__
 using CurrentPlatform = Xamarin.Forms.PlatformConfiguration.iOS;
-namespace Xamarin.Forms.Platform.iOS.Skia
+namespace Xamarin.Forms.Platform.iOS.Doodle
 #else
 using CurrentPlatform = Xamarin.Forms.PlatformConfiguration.macOS;
 

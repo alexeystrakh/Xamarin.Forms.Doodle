@@ -2,7 +2,7 @@
 using UIKit;
 using Xamarin.Forms.Internals;
 
-namespace Xamarin.Forms.Platform.iOS.Skia
+namespace Xamarin.Forms.Platform.iOS.Doodle
 #else
 
 using Xamarin.Forms.Internals;

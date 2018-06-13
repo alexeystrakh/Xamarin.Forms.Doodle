@@ -8,7 +8,7 @@ using UIKit;
 using RectangleF = CoreGraphics.CGRect;
 using Xamarin.Forms.Internals;
 
-namespace Xamarin.Forms.Platform.iOS.Skia
+namespace Xamarin.Forms.Platform.iOS.Doodle
 {
     public class Platform : BindableObject, IPlatform, INavigation, IDisposable
     {

@@ -1,6 +1,6 @@
 ﻿#if __MOBILE__
 using UIKit;
-namespace Xamarin.Forms.Platform.iOS.Skia
+namespace Xamarin.Forms.Platform.iOS.Doodle
 #else
 using UIView = AppKit.NSView;
 

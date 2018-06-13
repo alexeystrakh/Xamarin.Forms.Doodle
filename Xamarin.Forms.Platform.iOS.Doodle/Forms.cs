@@ -13,7 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
 using Foundation;
-using Xamarin.Forms.Platform.iOS.Skia;
+using Xamarin.Forms.Platform.iOS.Doodle;
 #if __MOBILE__
 using UIKit;
 using Xamarin.Forms.Platform.iOS;

@@ -9,7 +9,7 @@ using NativeColor = UIKit.UIColor;
 using NativeControl = UIKit.UIControl;
 using NativeView = UIKit.UIView;
 
-namespace Xamarin.Forms.Platform.iOS.Skia
+namespace Xamarin.Forms.Platform.iOS.Doodle
 #else
 using NativeView = AppKit.NSView;
 using NativeColor = CoreGraphics.CGColor;

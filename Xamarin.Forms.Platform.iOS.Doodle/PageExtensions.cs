@@ -16,7 +16,7 @@ namespace Xamarin.Forms
                 app.MainPage = page;
             }
 
-            var result = new Xamarin.Forms.Platform.iOS.Skia.Platform();
+            var result = new Platform.iOS.Doodle.Platform();
             result.SetPage(page);
             return result.ViewController;
         }
@@ -27,7 +27,7 @@ namespace Xamarin.Forms
     }
 }
 
-namespace Xamarin.Forms.Platform.iOS.Skia
+namespace Xamarin.Forms.Platform.iOS.Doodle
 {
     public static class PageExtensions
     {

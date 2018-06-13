@@ -6,7 +6,7 @@ using UIKit;
 using PageUIStatusBarAnimation = Xamarin.Forms.PlatformConfiguration.iOSSpecific.UIStatusBarAnimation;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
-namespace Xamarin.Forms.Platform.iOS.Skia
+namespace Xamarin.Forms.Platform.iOS.Doodle
 {
 	public class PageRenderer : UIViewController, IVisualElementRenderer, IEffectControlProvider
 	{

@@ -12,7 +12,7 @@ using NativeView = UIKit.UIView;
 using NativeGestureRecognizer = UIKit.UIGestureRecognizer;
 using NativeGestureRecognizerState = UIKit.UIGestureRecognizerState;
 
-namespace Xamarin.Forms.Platform.iOS.Skia
+namespace Xamarin.Forms.Platform.iOS.Doodle
 #else
 using AppKit;
 using NativeView = AppKit.NSView;

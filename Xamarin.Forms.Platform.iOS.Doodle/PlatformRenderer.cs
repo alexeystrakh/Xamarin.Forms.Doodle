@@ -4,7 +4,7 @@ using System.Linq;
 using UIKit;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
-namespace Xamarin.Forms.Platform.iOS.Skia
+namespace Xamarin.Forms.Platform.iOS.Doodle
 {
     internal class ModalWrapper : UIViewController
     {

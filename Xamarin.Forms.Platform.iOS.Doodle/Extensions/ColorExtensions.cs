@@ -5,7 +5,7 @@ using RectangleF = CoreGraphics.CGRect;
 using SizeF = CoreGraphics.CGSize;
 #if __MOBILE__
 using UIKit;
-namespace Xamarin.Forms.Platform.iOS.Skia
+namespace Xamarin.Forms.Platform.iOS.Doodle
 #else
 using AppKit;
 using UIColor = AppKit.NSColor;

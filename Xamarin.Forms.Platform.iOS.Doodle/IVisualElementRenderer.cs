@@ -4,7 +4,7 @@ using UIKit;
 using NativeView = UIKit.UIView;
 using NativeViewController = UIKit.UIViewController;
 
-namespace Xamarin.Forms.Platform.iOS.Skia
+namespace Xamarin.Forms.Platform.iOS.Doodle
 #else
 using NativeView = AppKit.NSView;
 using NativeViewController = AppKit.NSViewController;

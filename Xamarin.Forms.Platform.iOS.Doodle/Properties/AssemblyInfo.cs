@@ -1,12 +1,12 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
+using UIKit;
 // Information about this assembly is defined by the following attributes. 
 // Change them to the values specific to your project.
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
-using Xamarin.Forms.Platform.iOS.Skia;
-using UIKit;
-using Xamarin.Forms.Platform.iOS.Skia.Renderers;
+using Xamarin.Forms.Platform.iOS.Doodle;
+using Xamarin.Forms.Platform.iOS.Doodle.Renderers;
 
 [assembly: AssemblyTitle("Xamarin.Forms.Platform.iOS.Doodle")]
 [assembly: AssemblyDescription("")]

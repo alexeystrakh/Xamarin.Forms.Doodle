@@ -2,7 +2,7 @@
 using Xamarin.Forms.Internals;
 
 #if __MOBILE__
-namespace Xamarin.Forms.Platform.iOS.Skia
+namespace Xamarin.Forms.Platform.iOS.Doodle
 #else
 
 namespace Xamarin.Forms.Platform.MacOS
