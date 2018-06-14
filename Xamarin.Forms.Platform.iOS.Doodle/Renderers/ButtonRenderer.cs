@@ -9,46 +9,19 @@ using UIKit;
 
 namespace Xamarin.Forms.Platform.iOS.Doodle.Renderers
 {
-    public class ButtonRenderer : ViewRenderer<Button, SKCanvasView>
+    public class ButtonRenderer : DoodleViewRenderer<Button>
     {
         public ButtonRenderer()
         {
+            
         }
 
-        protected override void OnElementChanged(ElementChangedEventArgs<Button> e)
+        public override void DrawView(SKSurface surface)
         {
-            base.OnElementChanged(e);
-
-            if (e.NewElement != null)
-            {
-                if (Control == null)
-                {
-                    SetNativeControl(CreateNativeControl());
-
-                    Debug.Assert(Control != null, "Control != null");
-
-                    this.Control.PaintSurface += _skiaView_PaintSurface;
-                    this.Control.Frame = new CoreGraphics.CGRect(0, 0, 250, 150);
-                }
-            }
-
-            // TODO: unsubscribe
-        }
-
-        protected override SKCanvasView CreateNativeControl()
-        {
-            return new SKCanvasView();
-        }
-
-        private void _skiaView_PaintSurface(object sender, SKPaintSurfaceEventArgs e)
-        {
-            var surface = e.Surface;
             var canvas = surface.Canvas;
 
-            canvas.Clear(SKColors.White);
-
             // Fill color for Group Style
-            var GroupStyleFillColor = SKColors.Beige;
+            var GroupStyleFillColor = SKColors.Aqua;
 
             // New Group Style fill paint
             var GroupStyleFillPaint = new SKPaint()
@@ -60,7 +33,7 @@ namespace Xamarin.Forms.Platform.iOS.Doodle.Renderers
             };
 
             // Frame color for Group Style
-            var GroupStyleFrameColor = SKColors.Beige;
+            var GroupStyleFrameColor = SKColors.Black;
 
             // New Group Style frame paint
             var GroupStyleFramePaint = new SKPaint()
@@ -78,7 +51,7 @@ namespace Xamarin.Forms.Platform.iOS.Doodle.Renderers
             //-----------------------------------------------------------------------------
             // Draw Group shape group
             // Fill color for Round Rectangle Style
-            var RoundRectangleStyleFillColor = SKColors.Beige;
+            var RoundRectangleStyleFillColor = SKColors.Aqua;
 
             // New Round Rectangle Style fill paint
             var RoundRectangleStyleFillPaint = new SKPaint()
@@ -106,8 +79,8 @@ namespace Xamarin.Forms.Platform.iOS.Doodle.Renderers
             };
 
             // Draw Round Rectangle shape
-            canvas.DrawRoundRect(new SKRect(1.523438f, 2.175781f, 418.0703f, 125.3398f), 32f, 32f, RoundRectangleStyleFillPaint);
-            canvas.DrawRoundRect(new SKRect(1.523438f, 2.175781f, 418.0703f, 125.3398f), 32f, 32f, RoundRectangleStyleFramePaint);
+            canvas.DrawRoundRect(new SKRect(100, 300, 600, 200), 32f, 32f, RoundRectangleStyleFillPaint);
+            canvas.DrawRoundRect(new SKRect(100, 300, 600, 200), 32f, 32f, RoundRectangleStyleFramePaint);
 
             // Fill color for Text Style
             var TextStyleFillColor = SKColors.Black;
@@ -128,7 +101,7 @@ namespace Xamarin.Forms.Platform.iOS.Doodle.Renderers
             };
 
             // Draw Text shape
-            canvas.DrawText(Element.Text, 209.6016f, 74.88281f, TextStyleFillPaint);
+            canvas.DrawText(Element.Text, 340, 265, TextStyleFillPaint);
         }
     }
 }

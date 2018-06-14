@@ -93,6 +93,9 @@
     <Compile Include="Renderers\PageRenderer.cs" />
     <Compile Include="DoodlePlatformRenderer.cs" />
     <Compile Include="DoodlePlatform.cs" />
+    <Compile Include="DoodleVisualElementPackager.cs" />
+    <Compile Include="DoodleViewRenderer.cs" />
+    <Compile Include="IDoodleElementRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Xamarin.Forms\Xamarin.Forms.Core\Xamarin.Forms.Core.csproj">
