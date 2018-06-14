@@ -311,7 +311,7 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
             canvas.Clear(SKColors.Beige);
             canvas.DrawText("Skia Platform Page", 200, 100, new SKPaint
             {
-                Color = SKColors.Black,
+                Color = SKColors.BlueViolet,
                 TextSize = 36,
                 IsAntialias = true
             });
