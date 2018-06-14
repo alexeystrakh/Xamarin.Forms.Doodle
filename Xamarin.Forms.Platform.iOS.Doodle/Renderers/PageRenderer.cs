@@ -5,282 +5,318 @@ using Xamarin.Forms.Internals;
 using UIKit;
 using PageUIStatusBarAnimation = Xamarin.Forms.PlatformConfiguration.iOSSpecific.UIStatusBarAnimation;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
+using SkiaSharp;
+using SkiaSharp.Views.iOS;
 
 namespace Xamarin.Forms.Platform.iOS.Doodle
 {
-	public class PageRenderer : UIViewController, IVisualElementRenderer, IEffectControlProvider
-	{
-		bool _appeared;
-		bool _disposed;
-		EventTracker _events;
-		VisualElementPackager _packager;
-		VisualElementTracker _tracker;
+    public class PageRenderer : UIViewController, IVisualElementRenderer, IEffectControlProvider
+    {
+        bool _appeared;
+        bool _disposed;
+        EventTracker _events;
+        DoodleVisualElementPackager _packager;
+        VisualElementTracker _tracker;
 
-		Page Page => Element as Page;
+        public SKCanvasView Canvas { get; private set; }
 
-		public PageRenderer()
-		{
-		}
+        public Page Page => Element as Page;
 
-		void IEffectControlProvider.RegisterEffect(Effect effect)
-		{
-			VisualElementRenderer<VisualElement>.RegisterEffect(effect, View);
-		}
+        public PageRenderer()
+        {
+        }
 
-		public VisualElement Element { get; private set; }
+        void IEffectControlProvider.RegisterEffect(Effect effect)
+        {
+            VisualElementRenderer<VisualElement>.RegisterEffect(effect, View);
+        }
 
-		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
+        public VisualElement Element { get; private set; }
 
-		public SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
-		{
-			return NativeView.GetSizeRequest(widthConstraint, heightConstraint);
-		}
+        public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 
-		public UIView NativeView
-		{
-			get { return _disposed ? null : View; }
-		}
+        public SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
+        {
+            return NativeView.GetSizeRequest(widthConstraint, heightConstraint);
+        }
 
-		public void SetElement(VisualElement element)
-		{
-			VisualElement oldElement = Element;
-			Element = element;
-			UpdateTitle();
+        public UIView NativeView
+        {
+            get { return _disposed ? null : View; }
+        }
 
-			OnElementChanged(new VisualElementChangedEventArgs(oldElement, element));
+        public void SetElement(VisualElement element)
+        {
+            VisualElement oldElement = Element;
+            Element = element;
+            UpdateTitle();
 
-			if (Element != null && !string.IsNullOrEmpty(Element.AutomationId))
-				SetAutomationId(Element.AutomationId);
+            OnElementChanged(new VisualElementChangedEventArgs(oldElement, element));
 
-			if (element != null)
-				element.SendViewInitialized(NativeView);
+            if (Element != null && !string.IsNullOrEmpty(Element.AutomationId))
+                SetAutomationId(Element.AutomationId);
 
-			EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
-		}
+            if (element != null)
+                element.SendViewInitialized(NativeView);
 
-		public void SetElementSize(Size size)
-		{
-			Element.Layout(new Rectangle(Element.X, Element.Y, size.Width, size.Height));
-		}
+            EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
+        }
 
-		public override void ViewSafeAreaInsetsDidChange()
-		{
+        public void SetElementSize(Size size)
+        {
+            Element.Layout(new Rectangle(Element.X, Element.Y, size.Width, size.Height));
+        }
 
-			var page = (Element as Page);
-			if (page != null && Forms.IsiOS11OrNewer)
-			{
-				var insets = NativeView.SafeAreaInsets;
-				if(page.Parent is TabbedPage)
-				{
-					insets.Bottom = 0;
-				}
-				page.On<PlatformConfiguration.iOS>().SetSafeAreaInsets(new Thickness(insets.Left, insets.Top, insets.Right, insets.Bottom));
-			
-			}
-			base.ViewSafeAreaInsetsDidChange();
-		}
+        public override void ViewSafeAreaInsetsDidChange()
+        {
 
-		public UIViewController ViewController => _disposed ? null : this;
+            var page = (Element as Page);
+            if (page != null && Forms.IsiOS11OrNewer)
+            {
+                var insets = NativeView.SafeAreaInsets;
+                if (page.Parent is TabbedPage)
+                {
+                    insets.Bottom = 0;
+                }
+                page.On<PlatformConfiguration.iOS>().SetSafeAreaInsets(new Thickness(insets.Left, insets.Top, insets.Right, insets.Bottom));
 
-		public override void ViewDidAppear(bool animated)
-		{
-			base.ViewDidAppear(animated);
+            }
+            base.ViewSafeAreaInsetsDidChange();
+        }
 
-			if (_appeared || _disposed)
-				return;
+        public UIViewController ViewController => _disposed ? null : this;
 
-			_appeared = true;
-			Page.SendAppearing();
-			UpdateStatusBarPrefersHidden();
-		}
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
 
-		public override void ViewDidDisappear(bool animated)
-		{
-			base.ViewDidDisappear(animated);
+            Canvas.PaintSurface += Canvas_PaintSurface;
+        }
 
-			if (!_appeared || _disposed)
-				return;
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
 
-			_appeared = false;
-			Page.SendDisappearing();
-		}
+            if (_appeared || _disposed)
+                return;
 
-		public override void ViewDidLoad()
-		{
-			base.ViewDidLoad();
+            _appeared = true;
+            Page.SendAppearing();
+            UpdateStatusBarPrefersHidden();
+        }
 
-			var uiTapGestureRecognizer = new UITapGestureRecognizer(a => View.EndEditing(true));
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
 
-			uiTapGestureRecognizer.ShouldRecognizeSimultaneously = (recognizer, gestureRecognizer) => true;
-			uiTapGestureRecognizer.ShouldReceiveTouch = OnShouldReceiveTouch;
-			uiTapGestureRecognizer.DelaysTouchesBegan =
-				uiTapGestureRecognizer.DelaysTouchesEnded = uiTapGestureRecognizer.CancelsTouchesInView = false;
-			View.AddGestureRecognizer(uiTapGestureRecognizer);
+            if (!_appeared || _disposed)
+                return;
 
-			UpdateBackground();
+            Canvas.PaintSurface -= Canvas_PaintSurface;
 
-			_packager = new VisualElementPackager(this);
-			_packager.Load();
+            _appeared = false;
+            Page.SendDisappearing();
+        }
 
-			Element.PropertyChanged += OnHandlePropertyChanged;
-			_tracker = new VisualElementTracker(this);
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
 
-			_events = new EventTracker(this);
-			_events.LoadEvents(View);
+            var uiTapGestureRecognizer = new UITapGestureRecognizer(a => View.EndEditing(true));
 
-			Element.SendViewInitialized(View);
-		}
+            uiTapGestureRecognizer.ShouldRecognizeSimultaneously = (recognizer, gestureRecognizer) => true;
+            uiTapGestureRecognizer.ShouldReceiveTouch = OnShouldReceiveTouch;
+            uiTapGestureRecognizer.DelaysTouchesBegan =
+                uiTapGestureRecognizer.DelaysTouchesEnded = uiTapGestureRecognizer.CancelsTouchesInView = false;
+            View.AddGestureRecognizer(uiTapGestureRecognizer);
 
-		public override void ViewWillDisappear(bool animated)
-		{
-			base.ViewWillDisappear(animated);
+            UpdateBackground();
 
-			View.Window?.EndEditing(true);
-		}
+            _packager = new DoodleVisualElementPackager(this);
+            _packager.Load();
 
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing && !_disposed)
-			{
-				Element.PropertyChanged -= OnHandlePropertyChanged;
-				Platform.SetRenderer(Element, null);
-				if (_appeared)
-					Page.SendDisappearing();
+            Element.PropertyChanged += OnHandlePropertyChanged;
+            _tracker = new VisualElementTracker(this);
 
-				_appeared = false;
+            _events = new EventTracker(this);
+            _events.LoadEvents(View);
 
-				if (_events != null)
-				{
-					_events.Dispose();
-					_events = null;
-				}
+            Element.SendViewInitialized(View);
 
-				if (_packager != null)
-				{
-					_packager.Dispose();
-					_packager = null;
-				}
+            Canvas = new SKCanvasView();
+            // TODO: apply constraints
+            Canvas.Frame = this.View.Bounds;
+            this.View.AddSubview(Canvas);
 
-				if (_tracker != null)
-				{
-					_tracker.Dispose();
-					_tracker = null;
-				}
+            //this.View.BackgroundColor = UIColor.Purple;
+        }
 
-				Element = null;
-				_disposed = true;
-			}
+        public override void ViewWillDisappear(bool animated)
+        {
+            base.ViewWillDisappear(animated);
 
-			base.Dispose(disposing);
-		}
+            View.Window?.EndEditing(true);
+        }
 
-		protected virtual void OnElementChanged(VisualElementChangedEventArgs e)
-		{
-			ElementChanged?.Invoke(this, e);
-		}
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && !_disposed)
+            {
+                Element.PropertyChanged -= OnHandlePropertyChanged;
+                Platform.SetRenderer(Element, null);
+                if (_appeared)
+                    Page.SendDisappearing();
 
-		protected virtual void SetAutomationId(string id)
-		{
-			if (NativeView != null)
-				NativeView.AccessibilityIdentifier = id;
-		}
+                _appeared = false;
 
-		void OnHandlePropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
-				UpdateBackground();
-			else if (e.PropertyName == Page.BackgroundImageProperty.PropertyName)
-				UpdateBackground();
-			else if (e.PropertyName == Page.TitleProperty.PropertyName)
-				UpdateTitle();
-			else if (e.PropertyName == PlatformConfiguration.iOSSpecific.Page.PrefersStatusBarHiddenProperty.PropertyName)
-				UpdateStatusBarPrefersHidden();
-		}
+                if (_events != null)
+                {
+                    _events.Dispose();
+                    _events = null;
+                }
 
-		public override UIKit.UIStatusBarAnimation PreferredStatusBarUpdateAnimation
-		{
-			get
-			{
-				var animation = ((Page)Element).OnThisPlatform().PreferredStatusBarUpdateAnimation();
-				switch (animation)
-				{
-					case (PageUIStatusBarAnimation.Fade):
-						return UIKit.UIStatusBarAnimation.Fade;
-					case (PageUIStatusBarAnimation.Slide):
-						return UIKit.UIStatusBarAnimation.Slide;
-					case (PageUIStatusBarAnimation.None):
-					default:
-						return UIKit.UIStatusBarAnimation.None;
-				}
-			}
-		}
+                if (_packager != null)
+                {
+                    _packager.Dispose();
+                    _packager = null;
+                }
 
-		void UpdateStatusBarPrefersHidden()
-		{
-			if (Element == null)
-				return;
+                if (_tracker != null)
+                {
+                    _tracker.Dispose();
+                    _tracker = null;
+                }
 
-			var animation = ((Page)Element).OnThisPlatform().PreferredStatusBarUpdateAnimation();
-			if (animation == PageUIStatusBarAnimation.Fade || animation == PageUIStatusBarAnimation.Slide)
-				UIView.Animate(0.25, () => SetNeedsStatusBarAppearanceUpdate());
-			else
-				SetNeedsStatusBarAppearanceUpdate();
-			View.SetNeedsLayout();
-		}
+                Element = null;
+                _disposed = true;
+            }
 
-		bool OnShouldReceiveTouch(UIGestureRecognizer recognizer, UITouch touch)
-		{
-			foreach (UIView v in ViewAndSuperviewsOfView(touch.View))
-			{
-				if (v is UITableView || v is UITableViewCell || v.CanBecomeFirstResponder)
-					return false;
-			}
-			return true;
-		}
+            base.Dispose(disposing);
+        }
 
-		public override bool PrefersStatusBarHidden()
-		{
-			var mode = ((Page)Element).OnThisPlatform().PrefersStatusBarHidden();
-			switch (mode)
-			{
-				case (StatusBarHiddenMode.True):
-					return true;
-				case (StatusBarHiddenMode.False):
-					return false;
-				case (StatusBarHiddenMode.Default):
-				default:
-					return base.PrefersStatusBarHidden();
-			}
-		}
+        protected virtual void OnElementChanged(VisualElementChangedEventArgs e)
+        {
+            ElementChanged?.Invoke(this, e);
+        }
 
-		void UpdateBackground()
-		{
-			string bgImage = ((Page)Element).BackgroundImage;
-			if (!string.IsNullOrEmpty(bgImage))
-			{
-				View.BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle(bgImage) ?? throw new Exception($"Image: File '{bgImage}' not found in app bundle"));
-				return;
-			}
-			Color bgColor = Element.BackgroundColor;
-			if (bgColor.IsDefault)
-				View.BackgroundColor = UIColor.White;
-			else
-				View.BackgroundColor = bgColor.ToUIColor();
-		}
+        protected virtual void SetAutomationId(string id)
+        {
+            if (NativeView != null)
+                NativeView.AccessibilityIdentifier = id;
+        }
 
-		void UpdateTitle()
-		{
-			if (!string.IsNullOrWhiteSpace(((Page)Element).Title))
-				Title = ((Page)Element).Title;
-		}
+        void OnHandlePropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
+                UpdateBackground();
+            else if (e.PropertyName == Page.BackgroundImageProperty.PropertyName)
+                UpdateBackground();
+            else if (e.PropertyName == Page.TitleProperty.PropertyName)
+                UpdateTitle();
+            else if (e.PropertyName == PlatformConfiguration.iOSSpecific.Page.PrefersStatusBarHiddenProperty.PropertyName)
+                UpdateStatusBarPrefersHidden();
+        }
 
-		IEnumerable<UIView> ViewAndSuperviewsOfView(UIView view)
-		{
-			while (view != null)
-			{
-				yield return view;
-				view = view.Superview;
-			}
-		}
-	}
+        public override UIKit.UIStatusBarAnimation PreferredStatusBarUpdateAnimation
+        {
+            get
+            {
+                var animation = ((Page)Element).OnThisPlatform().PreferredStatusBarUpdateAnimation();
+                switch (animation)
+                {
+                    case (PageUIStatusBarAnimation.Fade):
+                        return UIKit.UIStatusBarAnimation.Fade;
+                    case (PageUIStatusBarAnimation.Slide):
+                        return UIKit.UIStatusBarAnimation.Slide;
+                    case (PageUIStatusBarAnimation.None):
+                    default:
+                        return UIKit.UIStatusBarAnimation.None;
+                }
+            }
+        }
+
+        void UpdateStatusBarPrefersHidden()
+        {
+            if (Element == null)
+                return;
+
+            var animation = ((Page)Element).OnThisPlatform().PreferredStatusBarUpdateAnimation();
+            if (animation == PageUIStatusBarAnimation.Fade || animation == PageUIStatusBarAnimation.Slide)
+                UIView.Animate(0.25, () => SetNeedsStatusBarAppearanceUpdate());
+            else
+                SetNeedsStatusBarAppearanceUpdate();
+            View.SetNeedsLayout();
+        }
+
+        bool OnShouldReceiveTouch(UIGestureRecognizer recognizer, UITouch touch)
+        {
+            foreach (UIView v in ViewAndSuperviewsOfView(touch.View))
+            {
+                if (v is UITableView || v is UITableViewCell || v.CanBecomeFirstResponder)
+                    return false;
+            }
+            return true;
+        }
+
+        public override bool PrefersStatusBarHidden()
+        {
+            var mode = ((Page)Element).OnThisPlatform().PrefersStatusBarHidden();
+            switch (mode)
+            {
+                case (StatusBarHiddenMode.True):
+                    return true;
+                case (StatusBarHiddenMode.False):
+                    return false;
+                case (StatusBarHiddenMode.Default):
+                default:
+                    return base.PrefersStatusBarHidden();
+            }
+        }
+
+        void UpdateBackground()
+        {
+            string bgImage = ((Page)Element).BackgroundImage;
+            if (!string.IsNullOrEmpty(bgImage))
+            {
+                View.BackgroundColor = UIColor.FromPatternImage(UIImage.FromBundle(bgImage) ?? throw new Exception($"Image: File '{bgImage}' not found in app bundle"));
+                return;
+            }
+            Color bgColor = Element.BackgroundColor;
+            if (bgColor.IsDefault)
+                View.BackgroundColor = UIColor.White;
+            else
+                View.BackgroundColor = bgColor.ToUIColor();
+        }
+
+        void UpdateTitle()
+        {
+            if (!string.IsNullOrWhiteSpace(((Page)Element).Title))
+                Title = ((Page)Element).Title;
+        }
+
+        IEnumerable<UIView> ViewAndSuperviewsOfView(UIView view)
+        {
+            while (view != null)
+            {
+                yield return view;
+                view = view.Superview;
+            }
+        }
+
+        private void Canvas_PaintSurface(object sender, SKPaintSurfaceEventArgs e)
+        {
+            var surface = e.Surface;
+            var canvas = surface.Canvas;
+
+            canvas.Clear(SKColors.Beige);
+            canvas.DrawText("Skia Platform Page", 200, 100, new SKPaint
+            {
+                Color = SKColors.BlueViolet,
+                TextSize = 36,
+                IsAntialias = true
+            });
+
+            _packager.Redraw(surface);
+        }
+    }
 }
