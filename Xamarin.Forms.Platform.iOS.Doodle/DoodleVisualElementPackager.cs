@@ -42,6 +42,24 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
             }
         }
 
+        public void Touch(VisualElement view)
+        {
+            for (var i = 0; i < ElementController.LogicalChildren.Count; i++)
+            {
+                var child = ElementController.LogicalChildren[i] as VisualElement;
+                if (child != null)
+                {
+                    OnChildTouched(child);
+
+                    var viewRenderer = DoodlePlatform.GetDoodleRenderer(child);
+                    viewRenderer.Packager.Touch(child);
+                }
+            }
+
+            // TODO: force redraw for the whole view in any case
+            // ...
+        }
+
         protected virtual void OnChildAdded(VisualElement view)
         {
             var viewRenderer = DoodlePlatform.CreateDoodleRenderer(view);
@@ -52,6 +70,15 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
         {
             var viewRenderer = DoodlePlatform.GetDoodleRenderer(view);
             viewRenderer.DrawView(surface);
+        }
+
+        protected virtual void OnChildTouched(VisualElement view)
+        {
+            // TODO: validate location
+            // ...
+
+            var viewRenderer = DoodlePlatform.GetDoodleRenderer(view);
+            viewRenderer.Touch();
         }
 
         public void Dispose()

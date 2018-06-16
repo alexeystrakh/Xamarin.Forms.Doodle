@@ -10,5 +10,7 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
         void DrawView(SKSurface canvas);
 
         void SetElement(VisualElement element);
+
+        void Touch();
     }
 }
