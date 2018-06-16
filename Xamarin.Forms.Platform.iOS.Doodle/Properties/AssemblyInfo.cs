@@ -35,7 +35,7 @@ using Xamarin.Forms.Platform.iOS.Doodle.Renderers;
 //[assembly: ExportRenderer(typeof(BoxView), typeof(BoxRenderer))]
 //[assembly: ExportRenderer(typeof(Entry), typeof(EntryRenderer))]
 //[assembly: ExportRenderer(typeof(Editor), typeof(EditorRenderer))]
-//[assembly: ExportRenderer(typeof(Label), typeof(LabelRenderer))]
+[assembly: ExportRenderer(typeof(Label), typeof(LabelRenderer))]
 //[assembly: ExportRenderer(typeof(Image), typeof(ImageRenderer))]
 [assembly: ExportRenderer(typeof(Button), typeof(ButtonRenderer))]
 //[assembly: ExportRenderer(typeof(TableView), typeof(TableViewRenderer))]

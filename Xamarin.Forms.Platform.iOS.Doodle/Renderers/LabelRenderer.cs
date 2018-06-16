@@ -19,7 +19,7 @@ namespace Xamarin.Forms.Platform.iOS.Doodle.Renderers
         public override void DrawView(SKSurface surface)
         {
             var canvas = surface.Canvas;
-            canvas.DrawText(Element.Text, 100, 200, new SKPaint
+            canvas.DrawText(Element.Text, 80, 180, new SKPaint
             {
                 Color = SKColors.Black,
                 TextSize = 36,

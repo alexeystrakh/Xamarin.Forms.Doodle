@@ -10,6 +10,8 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
     public abstract class DoodleViewRenderer<TView> : IDoodleElementRenderer
         where TView : VisualElement
     {
+        public DoodleVisualElementPackager Packager { get; private set; }
+
         protected TView Element { get; set; }
 
         public abstract void DrawView(SKSurface canvas);
@@ -17,6 +19,12 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
         public void SetElement(VisualElement element)
         {
             Element = (TView)element;
+
+            if (Packager == null)
+            {
+                Packager = new DoodleVisualElementPackager(element);
+                Packager.Load();
+            }
         }
     }
 }

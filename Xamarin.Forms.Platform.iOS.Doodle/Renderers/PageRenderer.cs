@@ -132,7 +132,7 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
 
             UpdateBackground();
 
-            _packager = new DoodleVisualElementPackager(this);
+            _packager = new DoodleVisualElementPackager(this.Element);
             _packager.Load();
 
             Element.PropertyChanged += OnHandlePropertyChanged;
@@ -305,6 +305,8 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
 
         private void Canvas_PaintSurface(object sender, SKPaintSurfaceEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine($"Canvas_PaintSurface. Redrawing...");
+
             var surface = e.Surface;
             var canvas = surface.Canvas;
 
