@@ -16,10 +16,11 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
         bool _appeared;
         bool _disposed;
         EventTracker _events;
-        DoodleVisualElementPackager _packager;
         VisualElementTracker _tracker;
 
-        public SKCanvasView Canvas { get; private set; }
+        public DoodleVisualElementPackager Packager { get; private set; }
+
+        public DoodleCanvasView Canvas { get; private set; }
 
         public Page Page => Element as Page;
 
@@ -90,8 +91,6 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-
-            Canvas.PaintSurface += Canvas_PaintSurface;
         }
 
         public override void ViewDidAppear(bool animated)
@@ -113,8 +112,6 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
             if (!_appeared || _disposed)
                 return;
 
-            Canvas.PaintSurface -= Canvas_PaintSurface;
-
             _appeared = false;
             Page.SendDisappearing();
         }
@@ -133,8 +130,8 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
 
             UpdateBackground();
 
-            _packager = new DoodleVisualElementPackager(this.Element);
-            _packager.Load();
+            Packager = new DoodleVisualElementPackager(this.Element);
+            Packager.Load();
 
             Element.PropertyChanged += OnHandlePropertyChanged;
             _tracker = new VisualElementTracker(this);
@@ -145,7 +142,7 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
             Element.SendViewInitialized(View);
 
            
-            Canvas = new SKCanvasView();
+            Canvas = new DoodleCanvasView(this);
             View.AddSubview(Canvas);
             Canvas.TranslatesAutoresizingMaskIntoConstraints = false;
 
@@ -166,6 +163,8 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
             };
             NSLayoutConstraint.ActivateConstraints(constraints);
 
+            Canvas.MultipleTouchEnabled = true;
+  
             //View.BackgroundColor = UIColor.Purple;
         }
 
@@ -193,10 +192,10 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
                     _events = null;
                 }
 
-                if (_packager != null)
+                if (Packager != null)
                 {
-                    _packager.Dispose();
-                    _packager = null;
+                    Packager.Dispose();
+                    Packager = null;
                 }
 
                 if (_tracker != null)
@@ -320,12 +319,35 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
                 view = view.Superview;
             }
         }
+    }
 
-        private void Canvas_PaintSurface(object sender, SKPaintSurfaceEventArgs e)
+    public class DoodleCanvasView : SKCanvasView
+    {
+        private PageRenderer _renderer;
+
+        public DoodleCanvasView(PageRenderer renderer)
         {
-            System.Diagnostics.Debug.WriteLine($"Canvas_PaintSurface. Redrawing...");
+            _renderer = renderer;
+        }
 
-            var surface = e.Surface;
+        public override void TouchesBegan(NSSet touches, UIEvent evt)
+        {
+            System.Diagnostics.Debug.WriteLine($"DoodleCanvasView.TouchesBegan: {touches.DebugDescription} | {evt.DebugDescription}");
+            base.TouchesBegan(touches, evt);
+        }
+
+        public override void TouchesEnded(NSSet touches, UIEvent evt)
+        {
+            System.Diagnostics.Debug.WriteLine($"DoodleCanvasView.TouchesEnded: {touches.DebugDescription} | {evt.DebugDescription}");
+            base.TouchesEnded(touches, evt);
+        }
+
+        public override void DrawInSurface(SKSurface surface, SKImageInfo info)
+        {
+            base.DrawInSurface(surface, info);
+
+            System.Diagnostics.Debug.WriteLine($"DoodleCanvasView.DrawInSurface...");
+
             var canvas = surface.Canvas;
 
             canvas.Clear(SKColors.Beige);
@@ -336,7 +358,7 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
                 IsAntialias = true
             });
 
-            _packager.Redraw(surface);
+            _renderer.Packager.Redraw(surface);
         }
     }
 }
