@@ -7,6 +7,7 @@ using PageUIStatusBarAnimation = Xamarin.Forms.PlatformConfiguration.iOSSpecific
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 using SkiaSharp;
 using SkiaSharp.Views.iOS;
+using Foundation;
 
 namespace Xamarin.Forms.Platform.iOS.Doodle
 {
@@ -143,12 +144,29 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
 
             Element.SendViewInitialized(View);
 
+           
             Canvas = new SKCanvasView();
-            // TODO: apply constraints
-            Canvas.Frame = this.View.Bounds;
-            this.View.AddSubview(Canvas);
+            View.AddSubview(Canvas);
+            Canvas.TranslatesAutoresizingMaskIntoConstraints = false;
 
-            //this.View.BackgroundColor = UIColor.Purple;
+            // TODO: fix this, doesn't work
+            //var viewNames = NSDictionary.FromObjectsAndKeys(
+            //    new NSObject[] { Canvas },
+            //    new NSObject[] { new NSString("canvas")}
+            //);
+            //View.AddConstraints(NSLayoutConstraint.FromVisualFormat("H:|[canvas]|", 0, new NSDictionary(), viewNames));
+            //View.AddConstraints(NSLayoutConstraint.FromVisualFormat("V:|[canvas]|", 0, new NSDictionary(), viewNames));
+
+            var constraints = new[]
+            {
+                Canvas.LeadingAnchor.ConstraintEqualTo(View.SafeAreaLayoutGuide.LeadingAnchor),
+                Canvas.TrailingAnchor.ConstraintEqualTo(View.SafeAreaLayoutGuide.TrailingAnchor),
+                Canvas.TopAnchor.ConstraintEqualTo(View.SafeAreaLayoutGuide.TopAnchor),
+                Canvas.BottomAnchor.ConstraintEqualTo(View.SafeAreaLayoutGuide.BottomAnchor)
+            };
+            NSLayoutConstraint.ActivateConstraints(constraints);
+
+            //View.BackgroundColor = UIColor.Purple;
         }
 
         public override void ViewWillDisappear(bool animated)
