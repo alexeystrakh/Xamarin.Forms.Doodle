@@ -2,6 +2,7 @@
 using UIKit;
 using RectangleF = CoreGraphics.CGRect;
 using Xamarin.Forms.Internals;
+using Xamarin.Forms.Platform.iOS.Doodle.Renderers;
 
 namespace Xamarin.Forms.Platform.iOS.Doodle
 {
@@ -53,7 +54,7 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
 
         public static IDoodleElementRenderer CreateDoodleRenderer(VisualElement element)
         {
-            var renderer = Internals.Registrar.Registered.GetHandlerForObject<IDoodleElementRenderer>(element);
+            var renderer = Internals.Registrar.Registered.GetHandlerForObject<IDoodleElementRenderer>(element) ?? new DefaultRenderer();
             renderer.SetElement(element);
             return renderer;
         }

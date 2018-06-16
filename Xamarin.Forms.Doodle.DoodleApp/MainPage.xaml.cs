@@ -12,6 +12,7 @@ namespace Xamarin.Forms.Doodle.DoodleApp
         public MainPage()
         {
             InitializeComponent();
+            BindingContext = new MainPageViewModel();
         }
     }
 }

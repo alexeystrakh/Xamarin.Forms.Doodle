@@ -11,6 +11,9 @@ namespace Xamarin.Forms.Platform.iOS.Doodle.Renderers
 {
     public class ButtonRenderer : DoodleViewRenderer<Button>
     {
+        // TODO: fake state, remove
+        public bool _touched;
+
         public ButtonRenderer()
         {
             
@@ -51,7 +54,7 @@ namespace Xamarin.Forms.Platform.iOS.Doodle.Renderers
             //-----------------------------------------------------------------------------
             // Draw Group shape group
             // Fill color for Round Rectangle Style
-            var RoundRectangleStyleFillColor = SKColors.Aqua;
+            var RoundRectangleStyleFillColor = _touched ? SKColors.Purple : SKColors.Aqua;
 
             // New Round Rectangle Style fill paint
             var RoundRectangleStyleFillPaint = new SKPaint()
@@ -102,6 +105,14 @@ namespace Xamarin.Forms.Platform.iOS.Doodle.Renderers
 
             // Draw Text shape
             canvas.DrawText(Element.Text, 340, 265, TextStyleFillPaint);
+        }
+
+        public override void Touch()
+        {
+            base.Touch();
+
+            System.Diagnostics.Debug.WriteLine($"Button Touch event!");
+            _touched = !_touched;
         }
     }
 }

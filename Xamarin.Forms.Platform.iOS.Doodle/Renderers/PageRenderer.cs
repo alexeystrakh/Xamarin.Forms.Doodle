@@ -5,8 +5,6 @@ using Xamarin.Forms.Internals;
 using UIKit;
 using PageUIStatusBarAnimation = Xamarin.Forms.PlatformConfiguration.iOSSpecific.UIStatusBarAnimation;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
-using SkiaSharp;
-using SkiaSharp.Views.iOS;
 
 namespace Xamarin.Forms.Platform.iOS.Doodle
 {
@@ -15,10 +13,11 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
         bool _appeared;
         bool _disposed;
         EventTracker _events;
-        DoodleVisualElementPackager _packager;
         VisualElementTracker _tracker;
 
-        public SKCanvasView Canvas { get; private set; }
+        public DoodleVisualElementPackager Packager { get; private set; }
+
+        public DoodleCanvasView Canvas { get; private set; }
 
         public Page Page => Element as Page;
 
@@ -89,8 +88,6 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-
-            Canvas.PaintSurface += Canvas_PaintSurface;
         }
 
         public override void ViewDidAppear(bool animated)
@@ -112,8 +109,6 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
             if (!_appeared || _disposed)
                 return;
 
-            Canvas.PaintSurface -= Canvas_PaintSurface;
-
             _appeared = false;
             Page.SendDisappearing();
         }
@@ -132,8 +127,8 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
 
             UpdateBackground();
 
-            _packager = new DoodleVisualElementPackager(this);
-            _packager.Load();
+            Packager = new DoodleVisualElementPackager(this.Element);
+            Packager.Load();
 
             Element.PropertyChanged += OnHandlePropertyChanged;
             _tracker = new VisualElementTracker(this);
@@ -143,12 +138,31 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
 
             Element.SendViewInitialized(View);
 
-            Canvas = new SKCanvasView();
-            // TODO: apply constraints
-            Canvas.Frame = this.View.Bounds;
-            this.View.AddSubview(Canvas);
+           
+            Canvas = new DoodleCanvasView(this);
+            View.AddSubview(Canvas);
+            Canvas.TranslatesAutoresizingMaskIntoConstraints = false;
 
-            //this.View.BackgroundColor = UIColor.Purple;
+            // TODO: fix this, doesn't work
+            //var viewNames = NSDictionary.FromObjectsAndKeys(
+            //    new NSObject[] { Canvas },
+            //    new NSObject[] { new NSString("canvas")}
+            //);
+            //View.AddConstraints(NSLayoutConstraint.FromVisualFormat("H:|[canvas]|", 0, new NSDictionary(), viewNames));
+            //View.AddConstraints(NSLayoutConstraint.FromVisualFormat("V:|[canvas]|", 0, new NSDictionary(), viewNames));
+
+            var constraints = new[]
+            {
+                Canvas.LeadingAnchor.ConstraintEqualTo(View.SafeAreaLayoutGuide.LeadingAnchor),
+                Canvas.TrailingAnchor.ConstraintEqualTo(View.SafeAreaLayoutGuide.TrailingAnchor),
+                Canvas.TopAnchor.ConstraintEqualTo(View.SafeAreaLayoutGuide.TopAnchor),
+                Canvas.BottomAnchor.ConstraintEqualTo(View.SafeAreaLayoutGuide.BottomAnchor)
+            };
+            NSLayoutConstraint.ActivateConstraints(constraints);
+
+            Canvas.MultipleTouchEnabled = true;
+  
+            //View.BackgroundColor = UIColor.Purple;
         }
 
         public override void ViewWillDisappear(bool animated)
@@ -175,10 +189,10 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
                     _events = null;
                 }
 
-                if (_packager != null)
+                if (Packager != null)
                 {
-                    _packager.Dispose();
-                    _packager = null;
+                    Packager.Dispose();
+                    Packager = null;
                 }
 
                 if (_tracker != null)
@@ -301,22 +315,6 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
                 yield return view;
                 view = view.Superview;
             }
-        }
-
-        private void Canvas_PaintSurface(object sender, SKPaintSurfaceEventArgs e)
-        {
-            var surface = e.Surface;
-            var canvas = surface.Canvas;
-
-            canvas.Clear(SKColors.Beige);
-            canvas.DrawText("Skia Platform Page", 200, 100, new SKPaint
-            {
-                Color = SKColors.BlueViolet,
-                TextSize = 36,
-                IsAntialias = true
-            });
-
-            _packager.Redraw(surface);
         }
     }
 }
