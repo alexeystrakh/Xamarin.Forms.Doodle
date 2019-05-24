@@ -6,7 +6,7 @@ using Xamarin.Forms.Platform.iOS.Doodle.Renderers;
 
 namespace Xamarin.Forms.Platform.iOS.Doodle
 {
-    public class DoodlePlatform
+    public class DoodlePlatform : IPlatform
     {
         internal static readonly BindableProperty RendererProperty = BindableProperty.CreateAttached("Renderer", typeof(IVisualElementRenderer), typeof(DoodlePlatform), default(IVisualElementRenderer),
            propertyChanged: (bindable, oldvalue, newvalue) =>
@@ -102,6 +102,17 @@ namespace Xamarin.Forms.Platform.iOS.Doodle
             {
                 Console.Error.WriteLine("Potential view double add");
             }
+        }
+
+        SizeRequest IPlatform.GetNativeSize(VisualElement view, double widthConstraint, double heightConstraint)
+        {
+            return new SizeRequest(new Size(200, 100));
+
+            //var renderView = GetRenderer(view);
+            //if (renderView == null || renderView.NativeView == null)
+            //    return new SizeRequest(Size.Zero);
+            
+            //return renderView.GetDesiredSize(widthConstraint, heightConstraint);
         }
     }
 }
