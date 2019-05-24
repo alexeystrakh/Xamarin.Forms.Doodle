@@ -352,6 +352,15 @@ namespace Xamarin.Forms
                 NSApplication.SharedApplication.Terminate(new NSObject());
 #endif
             }
+
+            public SizeRequest GetNativeSize(VisualElement view, double widthConstraint, double heightConstraint)
+            {
+#if __MOBILE__
+                return Device.PlatformServices.GetNativeSize(view, widthConstraint, heightConstraint);
+#else
+				return Device.PlatformServices.GetNativeSize(view, widthConstraint, heightConstraint);
+#endif
+            }
         }
     }
 }
